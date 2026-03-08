@@ -1,0 +1,349 @@
+body {
+    text-align: center;
+    font-family: Arial;
+    margin: 0;
+}
+
+/* ================= TOP BACK BUTTON ================= */
+.back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: #ff69b4;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.back-btn:hover {
+    background: #ff1493;
+}
+
+/* ================= SOUND BUTTON ================= */
+.sound-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 15px;
+    cursor: pointer;
+    background: #ffb6c1;
+    border: none;
+    border-radius: 20px;
+    color: white;
+}
+
+/* General Button */
+button {
+    padding: 8px 15px;
+    margin: 10px;
+    cursor: pointer;
+    background: #ffb6c1;
+    border: none;
+    border-radius: 20px;
+    color: white;
+}
+
+/* ================= TABLE ================= */
+table {
+    margin: 20px auto;
+    border-collapse: collapse;
+    background: #ffc0cb;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 10px 20px;
+    border: 1px solid white;
+    color: #8b004f;
+}
+
+/* ================= BOARD ================= */
+.board {
+    width: 300px;
+    margin: 20px auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.cell {
+    width: 100px;
+    height: 100px;
+    background: #ffd1dc;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: 2px solid #ff69b4;
+    border-radius: 15px;
+    transition: 0.2s;
+}
+
+.cell:hover {
+    background: #ffb6c1;
+}
+
+/* Disabled board */
+.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+/* ================= POPUP ================= */
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 182, 193, 0.85);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content {
+    position: relative;
+    background: white;
+    padding: 70px 90px;
+    border-radius: 30px;
+    text-align: center;
+}
+
+/* Popup Buttons */
+.popup-back-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: #ff69b4;
+}
+
+.restart-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: #ff69b4;
+}
+
+/* ================= WELCOME PAGE ================= */
+#welcomePage {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+/* Welcome Title */
+#welcomePage h1 {
+    font-size: 60px;
+    margin-bottom: 10px;
+}
+
+#welcomePage h3 {
+    margin-bottom: 25px;
+}
+
+/* Form Box */
+#welcomePage .form {
+    background: #ffc0cb;
+    padding: 40px 60px;
+    border-radius: 20px;
+    border: 5px solid #ff1493;
+}
+
+/* Inputs */
+#welcomePage input {
+    display: block;
+    width: 230px;
+    margin: 10px auto;
+    padding: 10px 15px;
+    border-radius: 15px;
+    border: 3px solid #ff69b4;
+    outline: none;
+}
+
+/* ================= MODE SELECT (Top Right) ================= */
+.mode-select {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: #ffc0cb;
+    padding: 15px;
+    border-radius: 15px;
+    border: 3px solid #ff1493;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* ================= THEME BUTTONS VERTICAL ================= */
+.theme-buttons {
+    display: flex;
+    flex-direction: column;   /* vertical line */
+    gap: 10px;
+}
+
+.theme-buttons button {
+    padding: 6px 15px;
+    font-size: 14px;
+    border: 3px solid #ff1493;
+    background: #ffc0cb;
+    color: #8b004f;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.theme-buttons button:hover {
+    background: #ff1493;
+    color: white;
+}
+
+/* ================= THEMES ================= */
+
+/* LIGHT */
+body.light {
+    background: aliceblue;
+    color: #d63384;
+}
+
+/* DARK */
+body.dark {
+    background: #111;
+    color: white;
+}
+
+body.dark .cell {
+    background: #333;
+    border: 3px solid white;
+}
+
+/* NEON */
+body.neon {
+    background: black;
+    color: #00ffff;
+}
+
+body.neon .cell {
+    background: black;
+    border: 3px solid #00ffff;
+    box-shadow: 0 0 10px #00ffff;
+    color: #00ffff;
+}
+/* Board Active Border */
+#welcomepage .Start-btn {
+    border: 5px solid #ff1493;
+    padding: 10px;
+    border-radius: 20px;
+    transition: 0.3s;
+}
+
+/* ================= POPUP BASE ================= */
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content {
+    position: relative;
+    padding: 70px 90px;
+    border-radius: 30px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* ================= LIGHT THEME POPUP ================= */
+body.light .popup {
+    background: rgba(173, 216, 230, 0.8);
+}
+
+body.light .popup-content {
+    background: white;
+    color: #d63384;
+    border: 5px solid #d63384;
+}
+
+/* ================= DARK THEME POPUP ================= */
+body.dark .popup {
+    background: rgba(0, 0, 0, 0.85);
+}
+
+body.dark .popup-content {
+    background: #222;
+    color: white;
+    border: 5px solid white;
+}
+
+/* ================= NEON THEME POPUP ================= */
+body.neon .popup {
+    background: rgba(0, 0, 0, 0.9);
+}
+
+body.neon .popup-content {
+    background: black;
+    color: #00ffff;
+    border: 5px solid #00ffff;
+    box-shadow: 0 0 20px #00ffff;
+}
+/* ================= START BUTTON BASE ================= */
+#welcomepage .start-btn {
+    padding: 12px 25px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: 0.3s;
+    border: 4px solid;
+}
+
+/* ================= LIGHT THEME ================= */
+#welcomepage .light .start-btn {
+    background: white;
+    color: #d63384;
+    border-color: #1c020f;
+}
+
+#welcomepage .light .start-btn:hover {
+    background: #d63384;
+    color: white;
+}
+
+/* ================= DARK THEME ================= */
+#welcomepage .dark .start-btn {
+    background: #222;
+    color: white;
+    border-color: white;
+}
+
+#welcomepage .dark .start-btn:hover {
+    background: white;
+    color: black;
+}
+
+/* ================= NEON THEME ================= */
+#welcomepage .neon .start-btn {
+    background: black;
+    color: #00ffff;
+    border-color: #00ffff;
+    box-shadow: 0 0 15px #00ffff;
+}
+
+#welcomepage .neon .start-btn:hover {
+    background: #00ffff;
+    color: black;
+}

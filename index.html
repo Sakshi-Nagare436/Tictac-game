@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tic Tac Toe</title>
+    
+    <!-- <script src="react.js"></script> -->
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="light">
+
+<!-- ================= WELCOME PAGE ================= -->
+<div id="welcomePage">
+
+    <div class="mode-select">
+        <label>Mode:</label>
+        <select id="gameMode">
+            <option value="player">2 Player</option>
+            <option value="computer">Play vs Computer</option>
+        </select>
+
+        <br><br>
+
+        <label>Theme:</label>
+        <div class="theme-buttons">
+    <button onclick="setTheme('light')">Light</button>
+    <button onclick="setTheme('dark')">Dark</button>
+    <button onclick="setTheme('neon')">GameX</button>
+</div>
+    </div>
+
+    <h1>FUN Tic Tac Toe</h1>
+    <h3>✨ 3 Rounds Challenge ✨</h3>
+
+    <div class="form">
+        <input type="text" id="p1" placeholder="Enter Player 1 Name">
+        <input type="text" id="p2" placeholder="Enter Player 2 Name">
+
+        <div class="difficulty-box">
+            <label>Difficulty:</label>
+            <select id="difficulty">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+        </div>
+
+        <button onclick="startGame()">Start Game</button>
+    </div>
+</div>
+
+<!-- ================= GAME PAGE ================= -->
+<div id="gamePage" style="display:none; position:relative;">
+
+    <button class="back-btn" onclick="goBack()">⬅ Back</button>
+
+    <button id="soundBtn" class="sound-btn" onclick="toggleSound()">
+        🔊 Sound On
+    </button>
+
+    <h1>Tic Tac Toe</h1>
+
+    <table>
+        <tr>
+            <th>Player</th>
+            <th>Symbol</th>
+            <th>Score</th>
+        </tr>
+        <tr>
+            <td id="name1">-</td>
+            <td>X</td>
+            <td id="score1">0</td>
+        </tr>
+        <tr>
+            <td id="name2">-</td>
+            <td>O</td>
+            <td id="score2">0</td>
+        </tr>
+    </table>
+
+    <h3 id="roundInfo"></h3>
+
+    <div class="board ">
+        <div class="cell" data-index="0"></div>
+        <div class="cell" data-index="1"></div>
+        <div class="cell" data-index="2"></div>
+        <div class="cell" data-index="3"></div>
+        <div class="cell" data-index="4"></div>
+        <div class="cell" data-index="5"></div>
+        <div class="cell" data-index="6"></div>
+        <div class="cell" data-index="7"></div>
+        <div class="cell" data-index="8"></div>
+    </div>
+
+    <h2 id="status"></h2>
+    <button onclick="nextRound()">Next Round</button>
+</div>
+
+<div id="winnerPopup" class="popup">
+    <div class="popup-content">
+        <h1 id="popupText"></h1>
+        <button class="popup-back-btn" onclick="goBackFromPopup()">⬅ Back</button>
+        <button id="restartBtn" class="restart-btn">🔄 Restart Game</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,21 +1,20 @@
 // ================= VARIABLES =================
-let cells = document.querySelectorAll(".cell");
-let board = document.querySelector(".board");
-let statusText = document.getElementById("status");
+const cells = document.querySelectorAll(".cell");
+const board = document.querySelector(".board");
+const statusText = document.getElementById("status");
 
 let currentPlayer = "X";
 let gameActive = false;
 
 let gameMode = "player";
 let difficulty = "easy";
-
-let round = 1;
-let maxRounds = 3;
-
-let scoreX = 0;
-let scoreO = 0;
-
 let soundOn = true;
+
+let player1Name = "";
+let player2Name = "";
+
+let score1 = 0;
+let score2 = 0;
 
 const winPatterns = [
   [0,1,2],[3,4,5],[6,7,8],
@@ -24,258 +23,278 @@ const winPatterns = [
 ];
 
 // ================= START GAME =================
-function startGame(){
-document.querySelector(".board").classList.add("active");
-    // Get dropdown values
+function startGame() {
+    const p1Input = document.getElementById("p1");
+    const p2Input = document.getElementById("p2");
+
+    player1Name = p1Input.value.trim();
+    player2Name = p2Input.value.trim();
+
     gameMode = document.getElementById("gameMode").value;
     difficulty = document.getElementById("difficulty").value;
+
+    if (player1Name === "") {
+        alert("Please enter Player 1 name first!");
+        return;
+    }
+
+    if (gameMode === "player") {
+        if (player2Name === "") {
+            alert("Please enter Player 2 name first!");
+            return;
+        }
+    } else {
+        player2Name = "Computer";
+    }
+
+    // Show names in game table
+    document.getElementById("name1").innerText = player1Name;
+    document.getElementById("name2").innerText = player2Name;
 
     document.getElementById("welcomePage").style.display = "none";
     document.getElementById("gamePage").style.display = "block";
 
-    round = 1;
-    scoreX = 0;
-    scoreO = 0;
+    clearBoard();
+    currentPlayer = "X";
+    gameActive = true;
 
-    updateScore();
-    restartBoard();
+    statusText.innerText = `${player1Name} (X) Turn`;
 
-    document.getElementById("roundInfo").innerText = "Round 1 of 3";
+    // Unlock sound on first user click
+    unlockSound();
+}
+
+// ================= UNLOCK SOUND =================
+function unlockSound() {
+    const audio = document.getElementById("clickSound");
+    if (!audio) return;
+
+    // Try to "prime" audio for browsers
+    audio.volume = 1;
+    audio.muted = true;
+
+    const promise = audio.play();
+    if (promise !== undefined) {
+        promise.then(() => {
+            audio.pause();
+            audio.currentTime = 0;
+            audio.muted = false;
+        }).catch(() => {
+            audio.muted = false;
+        });
+    } else {
+        audio.muted = false;
+    }
+}
+
+// ================= PLAY SOUND =================
+function playSound() {
+    if (!soundOn) return;
+
+    const audio = document.getElementById("clickSound");
+    if (!audio) {
+        console.log("clickSound audio tag not found");
+        return;
+    }
+
+    audio.currentTime = 0;
+    const promise = audio.play();
+
+    if (promise !== undefined) {
+        promise.catch((err) => {
+            console.log("Sound blocked or file missing:", err);
+        });
+    }
 }
 
 // ================= CELL CLICK =================
 cells.forEach(cell => {
-    cell.addEventListener("click", function(){
-
-        if(!gameActive || cell.innerText !== "") return;
+    cell.addEventListener("click", function () {
+        if (!gameActive || cell.innerText !== "") return;
 
         cell.innerText = currentPlayer;
+        playSound();
 
-        if(checkWinner()){
-            handleWin(currentPlayer);
+        if (checkWinner()) {
+            if (currentPlayer === "X") {
+                score1++;
+                document.getElementById("score1").innerText = score1;
+                statusText.innerText = `${player1Name} Wins!`;
+            } else {
+                score2++;
+                document.getElementById("score2").innerText = score2;
+                statusText.innerText = `${player2Name} Wins!`;
+            }
+            gameActive = false;
             return;
         }
 
-        if(checkDraw()){
-            handleDraw();
+        if (checkDraw()) {
+            statusText.innerText = "It's a Draw!";
+            gameActive = false;
             return;
         }
 
         currentPlayer = currentPlayer === "X" ? "O" : "X";
-        statusText.innerText = "Player " + currentPlayer + " Turn";
+        statusText.innerText = currentPlayer === "X"
+            ? `${player1Name} (X) Turn`
+            : `${player2Name} (O) Turn`;
 
-        if(gameMode === "computer" && currentPlayer === "O"){
-            setTimeout(computerMove, 400);
+        if (gameMode === "computer" && currentPlayer === "O" && gameActive) {
+            setTimeout(computerMove, 350);
         }
     });
 });
 
-// ================= HANDLE WIN =================
-function handleWin(player){
-    gameActive = false;
-
-    if(player === "X") scoreX++;
-    else scoreO++;
-
-    updateScore();
-
-    if(round >= maxRounds){
-        showFinalWinner();
-    } else {
-        statusText.innerText = "Player " + player + " Wins!";
-    }
-}
-
-// ================= HANDLE DRAW =================
-function handleDraw(){
-    gameActive = false;
-
-    if(round >= maxRounds){
-        showFinalWinner();
-    } else {
-        statusText.innerText = "Draw!";
-    }
-}
-
-// ================= NEXT ROUND =================
-function nextRound(){
-    if(round >= maxRounds) return;
-
-    round++;
-    document.getElementById("roundInfo").innerText =
-        "Round " + round + " of 3";
-
-    restartBoard();
-}
-
-// ================= RESTART BOARD =================
-function restartBoard(){
-    cells.forEach(cell => cell.innerText = "");
-    currentPlayer = "X";
-    gameActive = true;
-    statusText.innerText = "Player X Turn";
-    document.querySelector(".board").classList.remove("active");
-}
-
-// ================= UPDATE SCORE =================
-function updateScore(){
-    document.getElementById("score1").innerText = scoreX;
-    document.getElementById("score2").innerText = scoreO;
-}
-
-// ================= FINAL WINNER =================
-function showFinalWinner(){
-
-    let popup = document.getElementById("winnerPopup");
-    let text = document.getElementById("popupText");
-
-    if(scoreX > scoreO){
-        text.innerText = "🎉 Congratulations Player X 🎉";
-    }
-    else if(scoreO > scoreX){
-        text.innerText = "🎉 Congratulations Player O 🎉";
-    }
-    else{
-        text.innerText = "🤝 It's a Tie!";
-    }
-
-    popup.style.display = "flex";
-}
-
-// ================= CHECK WIN =================
-function checkWinner(){
-    return winPatterns.some(pattern => {
-        return pattern.every(index =>
-            cells[index].innerText === currentPlayer
-        );
-    });
-}
-
-// ================= CHECK DRAW =================
-function checkDraw(){
-    return [...cells].every(cell => cell.innerText !== "");
-}
-
 // ================= COMPUTER MOVE =================
-function computerMove(){
+function computerMove() {
+    if (!gameActive) return;
 
-    if(!gameActive) return;
-
-    let emptyCells = [...cells].filter(c => c.innerText === "");
-    if(emptyCells.length === 0) return;
+    const emptyCells = [...cells].filter(cell => cell.innerText === "");
+    if (emptyCells.length === 0) return;
 
     let move;
 
-    if(difficulty === "easy"){
+    if (difficulty === "easy") {
         move = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-    }
-    else if(difficulty === "medium"){
-        move = findBlockingMove() ||
-               emptyCells[Math.floor(Math.random() * emptyCells.length)];
-    }
-    else{
-        move = minimaxMove();
+    } else if (difficulty === "medium") {
+        move = findBlockingMove() || emptyCells[Math.floor(Math.random() * emptyCells.length)];
+    } else {
+        move = findBestMove() || emptyCells[Math.floor(Math.random() * emptyCells.length)];
     }
 
     move.innerText = "O";
+    playSound();
 
-    if(checkWinner()){
-        handleWin("O");
+    if (checkWinner()) {
+        score2++;
+        document.getElementById("score2").innerText = score2;
+        statusText.innerText = `${player2Name} Wins!`;
+        gameActive = false;
         return;
     }
 
-    if(checkDraw()){
-        handleDraw();
+    if (checkDraw()) {
+        statusText.innerText = "It's a Draw!";
+        gameActive = false;
         return;
     }
 
     currentPlayer = "X";
-    statusText.innerText = "Player X Turn";
+    statusText.innerText = `${player1Name} (X) Turn`;
 }
 
-// ================= BLOCK PLAYER =================
-function findBlockingMove(){
-    for(let pattern of winPatterns){
-        let values = pattern.map(i => cells[i].innerText);
+// ================= MEDIUM BLOCK MOVE =================
+function findBlockingMove() {
+    for (let pattern of winPatterns) {
+        const values = pattern.map(i => cells[i].innerText);
 
-        if(values.filter(v => v === "X").length === 2 &&
-           values.includes("")){
-            let index = pattern[values.indexOf("")];
+        if (values.filter(v => v === "X").length === 2 && values.includes("")) {
+            const index = pattern[values.indexOf("")];
             return cells[index];
         }
     }
     return null;
 }
 
-// ================= MINIMAX =================
-function minimaxMove(){
-    let bestScore = -Infinity;
-    let bestMove;
-
-    cells.forEach(cell => {
-        if(cell.innerText === ""){
-            cell.innerText = "O";
-            let score = minimax(false);
-            cell.innerText = "";
-            if(score > bestScore){
-                bestScore = score;
-                bestMove = cell;
-            }
+// ================= HARD MODE BEST MOVE =================
+function findBestMove() {
+    // First try winning move
+    for (let pattern of winPatterns) {
+        const values = pattern.map(i => cells[i].innerText);
+        if (values.filter(v => v === "O").length === 2 && values.includes("")) {
+            const index = pattern[values.indexOf("")];
+            return cells[index];
         }
-    });
+    }
 
-    return bestMove;
+    // Then block player
+    return findBlockingMove();
 }
 
-function minimax(isMax){
-    if(checkWinner()) return isMax ? -1 : 1;
-    if(checkDraw()) return 0;
+// ================= CHECK WIN =================
+function checkWinner() {
+    return winPatterns.some(pattern => {
+        return pattern.every(index => cells[index].innerText === currentPlayer);
+    });
+}
 
-    if(isMax){
-        let best = -Infinity;
-        cells.forEach(cell=>{
-            if(cell.innerText===""){
-                cell.innerText="O";
-                let score=minimax(false);
-                cell.innerText="";
-                best=Math.max(score,best);
-            }
-        });
-        return best;
-    }else{
-        let best=Infinity;
-        cells.forEach(cell=>{
-            if(cell.innerText===""){
-                cell.innerText="X";
-                let score=minimax(true);
-                cell.innerText="";
-                best=Math.min(score,best);
-            }
-        });
-        return best;
+// ================= CHECK DRAW =================
+function checkDraw() {
+    return [...cells].every(cell => cell.innerText !== "");
+}
+
+// ================= CLEAR BOARD =================
+function clearBoard() {
+    cells.forEach(cell => {
+        cell.innerText = "";
+    });
+}
+
+// ================= RESTART GAME =================
+function restartGame() {
+    clearBoard();
+    currentPlayer = "X";
+    gameActive = true;
+    statusText.innerText = `${player1Name} (X) Turn`;
+}
+
+// ================= NEXT ROUND =================
+function nextRound() {
+    restartGame();
+}
+
+// ================= MODE =================
+function setMode(mode) {
+    gameMode = mode;
+
+    const p2 = document.getElementById("p2");
+    const difficultyBox = document.getElementById("difficultyBox");
+
+    if (mode === "computer") {
+        p2.value = "";
+        p2.placeholder = "Computer will play as O";
+        p2.disabled = true;
+        difficultyBox.style.display = "block";
+    } else {
+        p2.disabled = false;
+        p2.placeholder = "Enter Player 2 Name";
+        difficultyBox.style.display = "block";
     }
 }
 
+// ================= DIFFICULTY =================
+function setDifficulty(level) {
+    difficulty = level;
+}
+
 // ================= THEME =================
-function setTheme(theme){
-    document.body.classList.remove("light","dark","neon");
+function setTheme(theme) {
+    document.body.classList.remove("light", "dark", "neon");
     document.body.classList.add(theme);
 }
 
-// ================= SOUND =================
-function toggleSound(){
+// ================= SOUND TOGGLE =================
+function toggleSound() {
     soundOn = !soundOn;
-    document.getElementById("soundBtn").innerText =
-        soundOn ? "🔊 Sound On" : "🔇 Sound Off";
+    const btn = document.getElementById("soundBtn");
+    btn.innerText = soundOn ? "🔊 Sound On" : "🔇 Sound Off";
 }
 
-// ================= BACK BUTTON =================
-function goBack(){
+// ================= BACK =================
+function goBack() {
     document.getElementById("gamePage").style.display = "none";
     document.getElementById("welcomePage").style.display = "flex";
+    document.getElementById("winnerPopup").style.display = "none";
 }
 
-function goBackFromPopup(){
+// ================= POPUP BACK =================
+function goBackFromPopup() {
     document.getElementById("winnerPopup").style.display = "none";
     goBack();
 }
+
+// ================= INIT =================
+window.onload = function () {
+    setMode(document.getElementById("gameMode").value);
+};
